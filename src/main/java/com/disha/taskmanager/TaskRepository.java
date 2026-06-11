@@ -61,6 +61,13 @@ public class TaskRepository {
 
     // Delete
     public boolean deleteById(Long id) {
-        return tasks.removeIf(task -> task.getId().equals(id));
+
+        boolean deleted = tasks.removeIf(task -> task.getId().equals(id));
+
+        if (tasks.isEmpty()) {
+            nextId = 1L;
+        }
+
+        return deleted;
     }
 }

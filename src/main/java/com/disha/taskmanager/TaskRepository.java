@@ -7,9 +7,13 @@ import java.util.*;
 public class TaskRepository {
 
     private List<Task> tasks = new ArrayList<>();
+    private long nextId=1l;
 
     // Create
     public Task save(Task task) {
+        task.setId(nextId);
+        nextId++;
+
         tasks.add(task);
         return task;
     }

@@ -1,13 +1,15 @@
 package com.disha.taskmanager;
+
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 public class TaskRepository {
 
     private List<Task> tasks = new ArrayList<>();
-    private long nextId=1l;
+    private Long nextId = 1L;
 
     // Create
     public Task save(Task task) {
@@ -31,6 +33,16 @@ public class TaskRepository {
             }
         }
         return null;
+    }
+
+    // Check if task exists
+    public boolean existsById(Long id) {
+        for (Task task : tasks) {
+            if (task.getId().equals(id)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // Update

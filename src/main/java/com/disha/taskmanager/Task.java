@@ -1,3 +1,14 @@
 package com.disha.taskmanager;
+import jakarta.persistence.*;
 
-public record Task(String title, String description,boolean completed){}
+@Entity
+@Table(name = "tasks")
+public class Task {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String title;
+    private String description;
+    private boolean completed;
+}

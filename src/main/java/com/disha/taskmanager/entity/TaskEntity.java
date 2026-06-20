@@ -14,6 +14,10 @@ import jakarta.persistence.*;
         private String description;
         private boolean completed;
 
+        @ManyToOne
+        @JoinColumn(name="user_id")
+        private UserEntity user;
+
         public TaskEntity() {
         }
 
@@ -22,6 +26,7 @@ import jakarta.persistence.*;
             this.title = title;
             this.description = description;
             this.completed = completed;
+
         }
 
         public void setId(Long id) {
@@ -39,6 +44,10 @@ import jakarta.persistence.*;
             this.completed = completed;
         }
 
+        public void setUser(UserEntity user){
+            this.user=user;
+        }
+
         public Long getId() {
             return id;
         }
@@ -52,6 +61,10 @@ import jakarta.persistence.*;
 
         public boolean isCompleted() {
             return completed;
+        }
+
+        public UserEntity getUser(){
+            return user;
         }
     }
 

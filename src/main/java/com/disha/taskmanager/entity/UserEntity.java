@@ -1,6 +1,7 @@
 package com.disha.taskmanager.entity;
 
 import jakarta.persistence.*;
+import java.util.*;
 
 @Entity
 @Table(name="users")
@@ -13,6 +14,9 @@ public class UserEntity {
     private String name;
     private String email;
     private String password;
+
+    @OneToMany(mappedBy = "user")
+    private List<TaskEntity> manyTasks;
 
     public UserEntity(){}
 
@@ -34,6 +38,12 @@ public class UserEntity {
     public void setPassword(String password){
         this.password=password;
     }
+
+    public void setManyTasks(List<TaskEntity> manyTasks){
+        this.manyTasks=manyTasks;
+    }
+
+
     public long getId(){
         return id;
     }
@@ -45,5 +55,8 @@ public class UserEntity {
     }
     public String getPassword(){
         return password;
+    }
+    public List<TaskEntity> getManyTasks(){
+        return manyTasks;
     }
 }

@@ -1,6 +1,7 @@
-package com.disha.taskmanager;
+package com.disha.taskmanager.service;
 
 import com.disha.taskmanager.entity.TaskEntity;
+import com.disha.taskmanager.repository.TaskRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,11 +34,8 @@ public class TaskService {
 
     public TaskEntity getById(Long id) {
 
-        if (!repository.existsById(id)) {
-            throw new RuntimeException("Task not found.");
-        }
-
-        return repository.findById(id);
+        return repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Task not found."));
     }
 
     public TaskEntity updateTask(Long id, TaskEntity updatedTask) {
@@ -50,19 +48,23 @@ public class TaskService {
             throw new RuntimeException("Description cannot be empty.");
         }
 
-        if (!repository.existsById(id)) {
-            throw new RuntimeException("Task not found.");
-        }
+        TaskEntity existingTask = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Task not found."));
 
-        return repository.update(id, updatedTask);
+        existingTask.setTitle(updatedTask.getTitle());
+        existingTask.setDescription(updatedTask.getDescription());
+        existingTask.setCompleted(updatedTask.isCompleted());
+        existingTask.setUser(updatedTask.getUser());
+
+        return repository.save(existingTask);
     }
 
-    public boolean delete(Long id) {
+    public void delete(Long id) {
 
         if (!repository.existsById(id)) {
             throw new RuntimeException("Task not found.");
         }
 
-        return repository.deleteById(id);
+        repository.deleteById(id);
     }
 }

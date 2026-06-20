@@ -1,6 +1,7 @@
-package com.disha.taskmanager;
+package com.disha.taskmanager.controller;
 
 import com.disha.taskmanager.entity.TaskEntity;
+import com.disha.taskmanager.service.TaskService;
 import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
@@ -36,7 +37,7 @@ public class TaskController {
     }
 
     @DeleteMapping("/{id}")
-    public boolean deleteTask(@PathVariable Long id) {
-        return service.delete(id);
+    public void deleteTask(@PathVariable Long id) {
+        service.delete(id);
     }
 }

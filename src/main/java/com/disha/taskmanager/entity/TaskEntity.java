@@ -3,7 +3,9 @@ package com.disha.taskmanager.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name="tasks")
+@Table(name="tasks", indexes={
+        @Index(name="idx_title",columnList = "title")
+})
 
     public class TaskEntity {
 

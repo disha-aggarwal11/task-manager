@@ -1,5 +1,6 @@
 package com.disha.taskmanager;
 
+import com.disha.taskmanager.entity.TaskEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

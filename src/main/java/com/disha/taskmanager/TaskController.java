@@ -1,5 +1,6 @@
 package com.disha.taskmanager;
 
+import com.disha.taskmanager.entity.TaskEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
@@ -29,7 +30,7 @@ public class TaskController {
 
     @PatchMapping("/{id}")
     public TaskEntity updateTask(@PathVariable Long id,
-                                 @RequestBody TaskEntity updatedTask) {
+                                            @RequestBody TaskEntity updatedTask) {
 
         return service.updateTask(id, updatedTask);
     }

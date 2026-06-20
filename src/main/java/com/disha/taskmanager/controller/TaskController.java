@@ -2,6 +2,7 @@ package com.disha.taskmanager.controller;
 
 import com.disha.taskmanager.entity.TaskEntity;
 import com.disha.taskmanager.service.TaskService;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
@@ -19,7 +20,7 @@ public class TaskController {
         return service.createTask(task);
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public List<TaskEntity> getAllTasks() {
         return service.getAllTasks();
     }
@@ -39,5 +40,13 @@ public class TaskController {
     @DeleteMapping("/{id}")
     public void deleteTask(@PathVariable Long id) {
         service.delete(id);
+    }
+    @GetMapping
+    public Page<TaskEntity> getTasks(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "id") String sortBy) {
+
+        return service.getTasks(page, size, sortBy);
     }
 }

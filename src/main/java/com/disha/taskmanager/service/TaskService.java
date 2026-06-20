@@ -3,6 +3,7 @@ package com.disha.taskmanager.service;
 import com.disha.taskmanager.entity.TaskEntity;
 import com.disha.taskmanager.repository.TaskRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.*;
 
 import java.util.List;
 
@@ -66,5 +67,11 @@ public class TaskService {
         }
 
         repository.deleteById(id);
+    }
+    public Page<TaskEntity> getTasks(int page, int size, String sortBy) {
+
+        return repository.findAll(
+                PageRequest.of(page, size, Sort.by(sortBy))
+        );
     }
 }

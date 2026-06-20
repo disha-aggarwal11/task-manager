@@ -2,6 +2,7 @@ package com.disha.taskmanager.controller;
 
 import com.disha.taskmanager.entity.UserEntity;
 import com.disha.taskmanager.service.UserService;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,7 +22,7 @@ public class UserController {
         return service.createUser(user);
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public List<UserEntity> getAllUsers() {
         return service.getAllUsers();
     }
@@ -41,5 +42,13 @@ public class UserController {
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable Long id) {
         service.delete(id);
+    }
+    @GetMapping
+    public Page<UserEntity> getTasks(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "id") String sortBy) {
+
+        return service.getUsers(page, size, sortBy);
     }
 }

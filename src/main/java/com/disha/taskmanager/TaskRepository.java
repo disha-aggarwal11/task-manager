@@ -8,11 +8,11 @@ import java.util.List;
 @Repository
 public class TaskRepository {
 
-    private List<Task> tasks = new ArrayList<>();
+    private List<TaskEntity> tasks = new ArrayList<>();
     private Long nextId = 1L;
 
     // Create
-    public Task save(Task task) {
+    public TaskEntity save(TaskEntity task) {
         task.setId(nextId);
         nextId++;
 
@@ -21,13 +21,13 @@ public class TaskRepository {
     }
 
     // Read All
-    public List<Task> findAll() {
+    public List<TaskEntity> findAll() {
         return tasks;
     }
 
     // Read By Id
-    public Task findById(Long id) {
-        for (Task task : tasks) {
+    public TaskEntity findById(Long id) {
+        for (TaskEntity task : tasks) {
             if (task.getId().equals(id)) {
                 return task;
             }
@@ -37,7 +37,7 @@ public class TaskRepository {
 
     // Check if task exists
     public boolean existsById(Long id) {
-        for (Task task : tasks) {
+        for (TaskEntity task : tasks) {
             if (task.getId().equals(id)) {
                 return true;
             }
@@ -46,8 +46,8 @@ public class TaskRepository {
     }
 
     // Update
-    public Task update(Long id, Task updatedTask) {
-        for (Task task : tasks) {
+    public TaskEntity update(Long id, TaskEntity updatedTask) {
+        for (TaskEntity task : tasks) {
             if (task.getId().equals(id)) {
                 task.setTitle(updatedTask.getTitle());
                 task.setDescription(updatedTask.getDescription());

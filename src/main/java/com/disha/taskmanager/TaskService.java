@@ -13,7 +13,7 @@ public class TaskService {
         this.repository = repository;
     }
 
-    public Task createTask(Task task) {
+    public TaskEntity createTask(TaskEntity task) {
 
         if (task.getTitle() == null || task.getTitle().isBlank()) {
             throw new RuntimeException("Title cannot be empty.");
@@ -26,11 +26,11 @@ public class TaskService {
         return repository.save(task);
     }
 
-    public List<Task> getAllTasks() {
+    public List<TaskEntity> getAllTasks() {
         return repository.findAll();
     }
 
-    public Task getById(Long id) {
+    public TaskEntity getById(Long id) {
 
         if (!repository.existsById(id)) {
             throw new RuntimeException("Task not found.");
@@ -39,7 +39,7 @@ public class TaskService {
         return repository.findById(id);
     }
 
-    public Task updateTask(Long id, Task updatedTask) {
+    public TaskEntity updateTask(Long id, TaskEntity updatedTask) {
 
         if (updatedTask.getTitle() == null || updatedTask.getTitle().isBlank()) {
             throw new RuntimeException("Title cannot be empty.");

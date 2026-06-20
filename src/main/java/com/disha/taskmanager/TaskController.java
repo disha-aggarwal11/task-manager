@@ -13,23 +13,23 @@ public class TaskController {
         this.service=service;
     }
     @PostMapping
-    public Task createTask(@RequestBody Task task) {
+    public TaskEntity createTask(@RequestBody TaskEntity task) {
         return service.createTask(task);
     }
 
     @GetMapping
-    public List<Task> getAllTasks() {
+    public List<TaskEntity> getAllTasks() {
         return service.getAllTasks();
     }
 
     @GetMapping("/{id}")
-    public Task getById(@PathVariable Long id) {
+    public TaskEntity getById(@PathVariable Long id) {
         return service.getById(id);
     }
 
     @PatchMapping("/{id}")
-    public Task updateTask(@PathVariable Long id,
-                           @RequestBody Task updatedTask) {
+    public TaskEntity updateTask(@PathVariable Long id,
+                                 @RequestBody TaskEntity updatedTask) {
 
         return service.updateTask(id, updatedTask);
     }

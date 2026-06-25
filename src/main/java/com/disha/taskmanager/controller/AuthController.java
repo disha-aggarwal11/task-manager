@@ -1,6 +1,7 @@
 package com.disha.taskmanager.controller;
 
 import com.disha.taskmanager.dto.LoginRequest;
+import com.disha.taskmanager.dto.LoginResponse;
 import com.disha.taskmanager.entity.UserEntity;
 import com.disha.taskmanager.service.AuthService;
 import org.springframework.http.ResponseEntity;
@@ -10,25 +11,23 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final AuthService service;
+    private final AuthService authService;
 
-    public AuthController(AuthService service) {
-        this.service = service;
+    public AuthController(AuthService authService) {
+        this.authService = authService;
     }
 
     @PostMapping("/signup")
     public ResponseEntity<UserEntity> signup(@RequestBody UserEntity user) {
 
-        UserEntity savedUser = service.signup(user);
+        UserEntity savedUser = authService.signup(user);
 
         return ResponseEntity.ok(savedUser);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserEntity> login(@RequestBody LoginRequest request) {
+    public LoginResponse login(@RequestBody LoginRequest request) {
 
-        UserEntity user = service.login(request);
-
-        return ResponseEntity.ok(user);
+        return authService.login(request);
     }
 }

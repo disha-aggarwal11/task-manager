@@ -1,9 +1,11 @@
 package com.disha.taskmanager.service;
 
 import com.disha.taskmanager.dto.LoginRequest;
+import com.disha.taskmanager.dto.LoginResponse;
 import com.disha.taskmanager.entity.UserEntity;
 import com.disha.taskmanager.exception.InvalidCredentialsException;
 import com.disha.taskmanager.repository.UserRepository;
+import com.disha.taskmanager.security.JwtService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -12,11 +14,14 @@ public class AuthService {
 
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     public AuthService(UserRepository repository,
-                       PasswordEncoder passwordEncoder) {
+                       PasswordEncoder passwordEncoder,JwtService jwtService) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
+
     }
 
     // Signup
@@ -44,7 +49,7 @@ public class AuthService {
     }
 
     // Login
-    public UserEntity login(LoginRequest request) {
+    public LoginResponse login(LoginRequest request) {
 
         UserEntity user = repository.findByEmail(request.email())
                 .orElseThrow(() ->
@@ -54,6 +59,8 @@ public class AuthService {
             throw new InvalidCredentialsException("Invalid email or password");
         }
 
-        return user;
+        String token = jwtService.generateToken(user);
+
+        return new LoginResponse(token);
     }
 }

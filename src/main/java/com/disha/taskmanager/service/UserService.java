@@ -10,11 +10,16 @@ import org.springframework.data.domain.*;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
+
 public class UserService {
 
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
+
+    public UserService(UserRepository repository, PasswordEncoder passwordEncoder){
+        this.repository=repository;
+        this.passwordEncoder=passwordEncoder;
+    }
 
 
     public UserEntity createUser(UserEntity user) {

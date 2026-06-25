@@ -2,25 +2,28 @@ package com.disha.taskmanager.service;
 
 import com.disha.taskmanager.entity.UserEntity;
 import com.disha.taskmanager.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.*;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository repository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository repository) {
-        this.repository = repository;
-    }
 
     public UserEntity createUser(UserEntity user) {
 
-        if (user.getName() == null || user.getName().isBlank()) {
+        if (user.getUsername() == null || user.getUsername().isBlank()) {
             throw new RuntimeException("Name cannot be empty.");
         }
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         return repository.save(user);
     }
@@ -37,17 +40,18 @@ public class UserService {
 
     public UserEntity updateUser(Long id, UserEntity updateUser) {
 
-        if (updateUser.getName() == null || updateUser.getName().isBlank()) {
+        if (updateUser.getUsername() == null || updateUser.getUsername().isBlank()) {
             throw new RuntimeException("Name cannot be empty.");
         }
 
         UserEntity existingUser = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found."));
 
-        existingUser.setName(updateUser.getName());
+        existingUser.setUsername(updateUser.getUsername());
         existingUser.setEmail(updateUser.getEmail());
-        existingUser.setPassword(updateUser.getPassword());
-
+        existingUser.setPassword(
+                passwordEncoder.encode(updateUser.getPassword())
+        );
         return repository.save(existingUser);
     }
 

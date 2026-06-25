@@ -17,11 +17,6 @@ public class UserController {
         this.service = service;
     }
 
-    @PostMapping
-    public UserEntity createUser(@RequestBody UserEntity user) {
-        return service.createUser(user);
-    }
-
     @GetMapping("/all")
     public List<UserEntity> getAllUsers() {
         return service.getAllUsers();
@@ -44,9 +39,9 @@ public class UserController {
         service.delete(id);
     }
     @GetMapping
-    public Page<UserEntity> getTasks(
+    public Page<UserEntity> getUsers(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy) {
 
         return service.getUsers(page, size, sortBy);

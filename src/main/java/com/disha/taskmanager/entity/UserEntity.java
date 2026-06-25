@@ -16,7 +16,7 @@ public class UserEntity {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    private String username;
     private String email;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
@@ -27,17 +27,17 @@ public class UserEntity {
 
     public UserEntity(){}
 
-    public UserEntity(Long id,String name,String email,String password){
+    public UserEntity(Long id,String username,String email,String password){
         this.id=id;
-        this.name=name;
+        this.username=username;
         this.email=email;
         this.password=password;
     }
     public void setId(Long id){
         this.id=id;
     }
-    public void setName(String name){
-        this.name=name;
+    public void setUsername(String username){
+        this.username=username;
     }
     public void setEmail(String email){
         this.email=email;
@@ -54,8 +54,8 @@ public class UserEntity {
     public Long getId(){
         return id;
     }
-    public String getName(){
-        return name;
+    public String getUsername(){
+        return username;
     }
     public String getEmail(){
         return email;

@@ -7,6 +7,8 @@ import com.disha.taskmanager.entity.UserEntity;
 import com.disha.taskmanager.service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/auth")
@@ -27,24 +29,64 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public LoginResponse login(@RequestBody LoginRequest request) {
+    public ResponseEntity<LoginResponse> login(
+            @RequestBody LoginRequest request,
+            HttpServletResponse response) {
 
-        return authService.login(request);
+        LoginResponse loginResponse = authService.login(request);
+
+        Cookie cookie = new Cookie(
+                "refreshToken",
+                loginResponse.refreshToken()
+        );
+
+        cookie.setHttpOnly(true);
+
+        cookie.setSecure(false); // true after HTTPS deployment
+
+        cookie.setPath("/");
+
+        cookie.setMaxAge(7 * 24 * 60 * 60);
+
+        response.addCookie(cookie);
+
+        return ResponseEntity.ok(
+                new LoginResponse(
+                        loginResponse.accessToken(),
+                        null
+                )
+        );
     }
     @PostMapping("/refresh-token")
     public LoginResponse refreshToken(
-            @RequestBody RefreshTokenRequest request
-    ) {
+            @CookieValue("refreshToken") String refreshToken) {
 
-        return authService.refreshToken(request);
+        return authService.refreshToken(
+                new RefreshTokenRequest(refreshToken)
+        );
     }
     @PostMapping("/logout")
     public ResponseEntity<String> logout(
-            @RequestBody RefreshTokenRequest request
-    ) {
+            @CookieValue("refreshToken") String refreshToken,
+            HttpServletResponse response) {
 
-        authService.logout(request.refreshToken());
+        authService.logout(refreshToken);
 
-        return ResponseEntity.ok("Logged out successfully");
+        Cookie cookie = new Cookie(
+                "refreshToken",
+                null
+        );
+
+        cookie.setHttpOnly(true);
+
+        cookie.setPath("/");
+
+        cookie.setMaxAge(0);
+
+        response.addCookie(cookie);
+
+        return ResponseEntity.ok(
+                "Logged out successfully"
+        );
     }
 }

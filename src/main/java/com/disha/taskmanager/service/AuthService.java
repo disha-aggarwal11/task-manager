@@ -2,6 +2,7 @@ package com.disha.taskmanager.service;
 
 import com.disha.taskmanager.dto.LoginRequest;
 import com.disha.taskmanager.dto.LoginResponse;
+import com.disha.taskmanager.dto.RefreshTokenRequest;
 import com.disha.taskmanager.entity.RefreshToken;
 import com.disha.taskmanager.entity.UserEntity;
 import com.disha.taskmanager.exception.InvalidCredentialsException;
@@ -70,6 +71,39 @@ public class AuthService {
         return new LoginResponse(
                 accessToken,
                 refreshToken.getToken()
+        );
+    }
+
+    public LoginResponse refreshToken(
+            RefreshTokenRequest request
+    ) {
+
+        RefreshToken refreshToken = refreshTokenService
+                .findByToken(request.refreshToken())
+                .orElseThrow(() ->
+                        new RuntimeException("Refresh Token not found"));
+
+        refreshTokenService.verifyExpiration(refreshToken);
+
+        UserEntity user = refreshToken.getUser();
+
+        String accessToken =
+                jwtService.generateAccessToken(user);
+
+        return new LoginResponse(
+                accessToken,
+                refreshToken.getToken()
+        );
+    }
+    public void logout(String refreshToken) {
+
+        RefreshToken token =
+                refreshTokenService.findByToken(refreshToken)
+                        .orElseThrow(() ->
+                                new RuntimeException("Token not found"));
+
+        refreshTokenService.deleteByUser(
+                token.getUser()
         );
     }
 }

@@ -87,4 +87,9 @@ public class JwtService {
                 secretKey.getBytes(StandardCharsets.UTF_8)
         );
     }
+
+    public String generateAccessToken(UserEntity user) {
+
+        return generateToken(user);
+    }
 }

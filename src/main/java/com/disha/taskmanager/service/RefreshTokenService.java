@@ -5,6 +5,7 @@ import com.disha.taskmanager.entity.UserEntity;
 import com.disha.taskmanager.repository.RefreshTokenRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.Optional;
@@ -52,8 +53,21 @@ public class RefreshTokenService {
         return token.getExpiryDate().isBefore(Instant.now());
     }
 
+    @Transactional
     public void deleteByUser(UserEntity user) {
 
         refreshTokenRepository.deleteByUser(user);
+    }
+
+    public RefreshToken verifyExpiration(RefreshToken token) {
+
+        if (token.getExpiryDate().isBefore(Instant.now())) {
+
+            refreshTokenRepository.delete(token);
+
+            throw new RuntimeException("Refresh Token Expired");
+        }
+
+        return token;
     }
 }

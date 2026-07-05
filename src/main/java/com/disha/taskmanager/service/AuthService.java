@@ -2,6 +2,7 @@ package com.disha.taskmanager.service;
 
 import com.disha.taskmanager.dto.LoginRequest;
 import com.disha.taskmanager.dto.LoginResponse;
+import com.disha.taskmanager.entity.RefreshToken;
 import com.disha.taskmanager.entity.UserEntity;
 import com.disha.taskmanager.exception.InvalidCredentialsException;
 import com.disha.taskmanager.repository.UserRepository;
@@ -15,13 +16,15 @@ public class AuthService {
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final RefreshTokenService refreshTokenService;
 
     public AuthService(UserRepository repository,
-                       PasswordEncoder passwordEncoder,JwtService jwtService) {
+                       PasswordEncoder passwordEncoder, JwtService jwtService, RefreshTokenService refreshTokenService) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
 
+        this.refreshTokenService = refreshTokenService;
     }
 
     // Signup
@@ -53,14 +56,20 @@ public class AuthService {
 
         UserEntity user = repository.findByEmail(request.email())
                 .orElseThrow(() ->
-                        new InvalidCredentialsException("Invalid email or password"));
+                        new RuntimeException("Invalid email or password"));
 
         if (!passwordEncoder.matches(request.password(), user.getPassword())) {
-            throw new InvalidCredentialsException("Invalid email or password");
+            throw new RuntimeException("Invalid email or password");
         }
 
-        String token = jwtService.generateToken(user);
+        String accessToken = jwtService.generateToken(user);
 
-        return new LoginResponse(token);
+        RefreshToken refreshToken =
+                refreshTokenService.createRefreshToken(user);
+
+        return new LoginResponse(
+                accessToken,
+                refreshToken.getToken()
+        );
     }
 }

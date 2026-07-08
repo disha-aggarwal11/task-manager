@@ -13,6 +13,7 @@ import com.disha.taskmanager.dto.ForgotPasswordRequest;
 import com.disha.taskmanager.dto.ResetPasswordRequest;
 import com.disha.taskmanager.service.EmailService;
 import com.disha.taskmanager.service.PasswordResetService;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/auth")
@@ -32,7 +33,7 @@ public class AuthController {
         this.emailService = emailService;
     }
     @PostMapping("/signup")
-    public ResponseEntity<UserEntity> signup(@RequestBody UserEntity user) {
+    public ResponseEntity<UserEntity> signup(@Valid @RequestBody UserEntity user) {
 
         UserEntity savedUser = authService.signup(user);
 

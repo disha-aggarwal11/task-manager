@@ -6,6 +6,9 @@ import jakarta.persistence.*;
 import java.util.*;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name="users",indexes={
@@ -18,8 +21,13 @@ public class UserEntity {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Username is required")
     private String username;
+    @NotBlank(message = "Email is required")
+    @Email(message = "Enter a valid email")
     private String email;
+    @NotBlank(message = "Password is required")
+    @Size(min = 6, message = "Password must be at least 6 characters")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 

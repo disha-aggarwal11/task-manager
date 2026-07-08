@@ -32,18 +32,6 @@ public class AuthService {
     // Signup
     public UserEntity signup(UserEntity user) {
 
-        if (user.getUsername() == null || user.getUsername().isBlank()) {
-            throw new InvalidCredentialsException("Username cannot be empty.");
-        }
-
-        if (user.getEmail() == null || user.getEmail().isBlank()) {
-            throw new InvalidCredentialsException("Email cannot be empty.");
-        }
-
-        if (user.getPassword() == null || user.getPassword().length() < 6) {
-            throw new InvalidCredentialsException("Password must be at least 6 characters.");
-        }
-
         if (repository.findByEmail(user.getEmail()).isPresent()) {
             throw new InvalidCredentialsException("Email already exists.");
         }

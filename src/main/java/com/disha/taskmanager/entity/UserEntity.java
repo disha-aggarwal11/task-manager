@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.util.*;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 
 @Entity
 @Table(name="users",indexes={
@@ -24,6 +26,9 @@ public class UserEntity {
     @OneToMany(mappedBy = "user")
     @JsonIgnore
     private List<TaskEntity> manyTasks;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     public UserEntity(){}
 
@@ -48,6 +53,13 @@ public class UserEntity {
 
     public void setManyTasks(List<TaskEntity> manyTasks){
         this.manyTasks=manyTasks;
+    }
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public Role getRole() {
+        return role;
     }
 
 

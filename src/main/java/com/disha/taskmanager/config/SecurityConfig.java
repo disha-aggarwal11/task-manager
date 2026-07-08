@@ -48,10 +48,12 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**")
                         .permitAll()
 
+                        .requestMatchers("/admin/**")
+                        .hasRole("ADMIN")
+
                         .anyRequest()
                         .authenticated()
                 )
-
                 .addFilterBefore(
                         jwtFilter,
                         UsernamePasswordAuthenticationFilter.class

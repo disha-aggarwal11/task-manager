@@ -28,6 +28,7 @@ public class JwtService {
     public String generateToken(UserEntity user) {
 
         Map<String, Object> claims = new HashMap<>();
+        claims.put("role", user.getRole().name());
 
         return Jwts.builder()
                 .claims(claims)
@@ -41,6 +42,14 @@ public class JwtService {
     // Extract Email (Subject)
     public String extractEmail(String token) {
         return extractClaim(token, Claims::getSubject);
+    }
+
+    public String extractRole(String token) {
+
+        return extractClaim(
+                token,
+                claims -> claims.get("role", String.class)
+        );
     }
 
     // Generic Claim Extractor

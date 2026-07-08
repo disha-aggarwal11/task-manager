@@ -4,6 +4,7 @@ import com.disha.taskmanager.dto.LoginRequest;
 import com.disha.taskmanager.dto.LoginResponse;
 import com.disha.taskmanager.dto.RefreshTokenRequest;
 import com.disha.taskmanager.entity.RefreshToken;
+import com.disha.taskmanager.entity.Role;
 import com.disha.taskmanager.entity.UserEntity;
 import com.disha.taskmanager.exception.InvalidCredentialsException;
 import com.disha.taskmanager.repository.UserRepository;
@@ -48,6 +49,7 @@ public class AuthService {
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole(Role.USER);
 
         return repository.save(user);
     }

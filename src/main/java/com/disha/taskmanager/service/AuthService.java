@@ -57,6 +57,8 @@ public class AuthService {
     // Login
     public LoginResponse login(LoginRequest request) {
 
+        System.out.println("LOGIN API HIT");
+
         UserEntity user = repository.findByEmail(request.email())
                 .orElseThrow(() ->
                         new RuntimeException("Invalid email or password"));

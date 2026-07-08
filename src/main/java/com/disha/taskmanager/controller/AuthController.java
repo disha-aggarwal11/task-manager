@@ -9,17 +9,28 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import com.disha.taskmanager.dto.ForgotPasswordRequest;
+import com.disha.taskmanager.dto.ResetPasswordRequest;
+import com.disha.taskmanager.service.EmailService;
+import com.disha.taskmanager.service.PasswordResetService;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
     private final AuthService authService;
+    private final PasswordResetService passwordResetService;
+    private final EmailService emailService;
 
-    public AuthController(AuthService authService) {
+    public AuthController(
+            AuthService authService,
+            PasswordResetService passwordResetService,
+            EmailService emailService
+    ) {
         this.authService = authService;
+        this.passwordResetService = passwordResetService;
+        this.emailService = emailService;
     }
-
     @PostMapping("/signup")
     public ResponseEntity<UserEntity> signup(@RequestBody UserEntity user) {
 
@@ -87,6 +98,41 @@ public class AuthController {
 
         return ResponseEntity.ok(
                 "Logged out successfully"
+        );
+    }
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(
+            @RequestBody ForgotPasswordRequest request
+    ) {
+
+        String token = passwordResetService.createPasswordResetToken(
+                request.email()
+        );
+
+        emailService.sendPasswordResetEmail(
+                request.email(),
+                token
+        );
+
+        return ResponseEntity.ok(
+                "Password reset email sent successfully."
+        );
+    }
+    @PostMapping("/reset-password/{token}")
+    public ResponseEntity<String> resetPassword(
+
+            @PathVariable String token,
+
+            @RequestBody ResetPasswordRequest request
+    ) {
+
+        passwordResetService.resetPassword(
+                token,
+                request.newPassword()
+        );
+
+        return ResponseEntity.ok(
+                "Password updated successfully."
         );
     }
 }

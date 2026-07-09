@@ -1,6 +1,7 @@
 package com.disha.taskmanager.config;
 
 import com.disha.taskmanager.security.JwtFilter;
+import com.disha.taskmanager.security.RateLimitFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -20,9 +21,12 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
+    private final RateLimitFilter rateLimitFilter;
 
-    public SecurityConfig(JwtFilter jwtFilter) {
+    public SecurityConfig(JwtFilter jwtFilter,
+                          RateLimitFilter rateLimitFilter) {
         this.jwtFilter = jwtFilter;
+        this.rateLimitFilter = rateLimitFilter;
     }
 
     @Bean
@@ -56,13 +60,20 @@ public class SecurityConfig {
                         .anyRequest()
                         .authenticated()
                 )
+
                 .addFilterBefore(
-                        jwtFilter,
+                        rateLimitFilter,
                         UsernamePasswordAuthenticationFilter.class
+                )
+
+                .addFilterAfter(
+                        jwtFilter,
+                        RateLimitFilter.class
                 );
 
         return http.build();
     }
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
 

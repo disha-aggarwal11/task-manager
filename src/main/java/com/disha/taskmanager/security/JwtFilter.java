@@ -34,6 +34,8 @@ public class JwtFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
+        System.out.println(request.getServletPath());
+
         String authHeader = request.getHeader("Authorization");
 
         // No token -> continue request

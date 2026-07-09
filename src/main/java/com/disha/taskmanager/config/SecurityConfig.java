@@ -1,7 +1,7 @@
 package com.disha.taskmanager.config;
 
 import com.disha.taskmanager.security.JwtFilter;
-import com.disha.taskmanager.security.RateLimitFilter;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -10,7 +10,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -21,12 +20,11 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
-    private final RateLimitFilter rateLimitFilter;
 
-    public SecurityConfig(JwtFilter jwtFilter,
-                          RateLimitFilter rateLimitFilter) {
+    public SecurityConfig(JwtFilter jwtFilter
+                          ) {
         this.jwtFilter = jwtFilter;
-        this.rateLimitFilter = rateLimitFilter;
+
     }
 
     @Bean
@@ -43,33 +41,16 @@ public class SecurityConfig {
 
                 .cors(Customizer.withDefaults())
 
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(
-                                SessionCreationPolicy.STATELESS
-                        )
-                )
-
+                
                 .authorizeHttpRequests(auth -> auth
-
-                        .requestMatchers("/auth/**")
-                        .permitAll()
-
-                        .requestMatchers("/admin/**")
-                        .hasRole("ADMIN")
-
-                        .anyRequest()
-                        .authenticated()
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/login/**").permitAll()
+                        .requestMatchers("/oauth2/**").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .anyRequest().authenticated()
                 )
 
-                .addFilterBefore(
-                        rateLimitFilter,
-                        UsernamePasswordAuthenticationFilter.class
-                )
-
-                .addFilterAfter(
-                        jwtFilter,
-                        RateLimitFilter.class
-                );
+                .oauth2Login(Customizer.withDefaults());
 
         return http.build();
     }

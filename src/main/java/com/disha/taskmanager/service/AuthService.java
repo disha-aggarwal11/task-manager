@@ -98,4 +98,16 @@ public class AuthService {
                 token.getUser()
         );
     }
+    public LoginResponse loginWithUser(UserEntity user) {
+
+        String accessToken = jwtService.generateAccessToken(user);
+
+        RefreshToken refreshToken =
+                refreshTokenService.createRefreshToken(user);
+
+        return new LoginResponse(
+                accessToken,
+                refreshToken.getToken()
+        );
+    }
 }

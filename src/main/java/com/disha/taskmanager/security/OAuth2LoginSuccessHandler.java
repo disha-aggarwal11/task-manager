@@ -91,10 +91,8 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
         response.addCookie(cookie);
 
-        response.setContentType("text/plain");
-        response.getWriter().println("Google Login Successful");
-        response.getWriter().println();
-        response.getWriter().println("Access Token:");
-        response.getWriter().println(accessToken);
+        response.sendRedirect(
+                "http://localhost:5173/oauth-success?token=" + accessToken
+        );
     }
 }

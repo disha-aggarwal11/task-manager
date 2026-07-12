@@ -11,6 +11,8 @@ import com.disha.taskmanager.repository.UserRepository;
 import com.disha.taskmanager.security.JwtService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.disha.taskmanager.dto.SignupRequest;
+import com.disha.taskmanager.dto.UserResponse;
 
 @Service
 public class AuthService {
@@ -30,16 +32,26 @@ public class AuthService {
     }
 
     // Signup
-    public UserEntity signup(UserEntity user) {
+    public UserResponse signup(SignupRequest request) {
 
-        if (repository.findByEmail(user.getEmail()).isPresent()) {
+        if (repository.findByEmail(request.email()).isPresent()) {
             throw new InvalidCredentialsException("Email already exists.");
         }
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        UserEntity user = new UserEntity();
+
+        user.setUsername(request.username());
+        user.setEmail(request.email());
+        user.setPassword(passwordEncoder.encode(request.password()));
         user.setRole(Role.USER);
 
-        return repository.save(user);
+        UserEntity savedUser = repository.save(user);
+
+        return new UserResponse(
+                savedUser.getId(),
+                savedUser.getUsername(),
+                savedUser.getEmail()
+        );
     }
 
     // Login

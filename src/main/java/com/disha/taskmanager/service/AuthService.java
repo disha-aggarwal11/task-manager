@@ -13,10 +13,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.disha.taskmanager.dto.SignupRequest;
 import com.disha.taskmanager.dto.UserResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class AuthService {
 
+    private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
@@ -57,8 +60,7 @@ public class AuthService {
     // Login
     public LoginResponse login(LoginRequest request) {
 
-        System.out.println("LOGIN API HIT");
-
+        logger.info("Login request received for email: {}", request.email());
         UserEntity user = repository.findByEmail(request.email())
                 .orElseThrow(() ->
                         new RuntimeException("Invalid email or password"));

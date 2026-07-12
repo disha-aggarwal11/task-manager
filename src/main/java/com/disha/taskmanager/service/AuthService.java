@@ -63,11 +63,10 @@ public class AuthService {
         logger.info("Login request received for email: {}", request.email());
         UserEntity user = repository.findByEmail(request.email())
                 .orElseThrow(() ->
-                        new RuntimeException("Invalid email or password"));
+                        new InvalidCredentialsException("Invalid email or password"));
 
         if (!passwordEncoder.matches(request.password(), user.getPassword())) {
-            throw new RuntimeException("Invalid email or password");
-        }
+            throw new InvalidCredentialsException("Invalid email or password");        }
 
         String accessToken = jwtService.generateToken(user);
 

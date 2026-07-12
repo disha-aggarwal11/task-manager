@@ -3,7 +3,6 @@ package com.disha.taskmanager.controller;
 import com.disha.taskmanager.dto.LoginRequest;
 import com.disha.taskmanager.dto.LoginResponse;
 import com.disha.taskmanager.dto.RefreshTokenRequest;
-import com.disha.taskmanager.entity.UserEntity;
 import com.disha.taskmanager.service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +15,7 @@ import com.disha.taskmanager.service.PasswordResetService;
 import jakarta.validation.Valid;
 import com.disha.taskmanager.dto.SignupRequest;
 import com.disha.taskmanager.dto.UserResponse;
+import com.disha.taskmanager.util.CookieUtil;
 
 @RestController
 @RequestMapping("/auth")
@@ -48,20 +48,10 @@ public class AuthController {
 
         LoginResponse loginResponse = authService.login(request);
 
-        Cookie cookie = new Cookie(
-                "refreshToken",
+        CookieUtil.addRefreshTokenCookie(
+                response,
                 loginResponse.refreshToken()
         );
-
-        cookie.setHttpOnly(true);
-
-        cookie.setSecure(false); // true after HTTPS deployment
-
-        cookie.setPath("/");
-
-        cookie.setMaxAge(7 * 24 * 60 * 60);
-
-        response.addCookie(cookie);
 
         return ResponseEntity.ok(
                 new LoginResponse(
@@ -85,18 +75,7 @@ public class AuthController {
 
         authService.logout(refreshToken);
 
-        Cookie cookie = new Cookie(
-                "refreshToken",
-                null
-        );
-
-        cookie.setHttpOnly(true);
-
-        cookie.setPath("/");
-
-        cookie.setMaxAge(0);
-
-        response.addCookie(cookie);
+        CookieUtil.clearRefreshTokenCookie(response);
 
         return ResponseEntity.ok(
                 "Logged out successfully"

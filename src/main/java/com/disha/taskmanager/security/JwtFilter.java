@@ -6,18 +6,23 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import java.util.List;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
+
+    private static final Logger logger =
+            LoggerFactory.getLogger(JwtFilter.class);
 
     private final JwtService jwtService;
     private final UserRepository repository;
@@ -34,11 +39,13 @@ public class JwtFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        System.out.println(request.getServletPath());
+        logger.debug("Request URI: {}", request.getServletPath());
 
         String authHeader = request.getHeader("Authorization");
 
-        // No token -> continue request
+        logger.info("Authorization Header: {}", authHeader);
+
+        // No JWT token -> continue request
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
@@ -50,7 +57,7 @@ public class JwtFilter extends OncePerRequestFilter {
         // Extract email from JWT
         String email = jwtService.extractEmail(token);
 
-        // Authenticate only if not already authenticated
+        // Authenticate only if user is not already authenticated
         if (email != null &&
                 SecurityContextHolder.getContext().getAuthentication() == null) {
 

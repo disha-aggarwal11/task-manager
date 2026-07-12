@@ -4,6 +4,8 @@ import com.disha.taskmanager.entity.TaskEntity;
 import com.disha.taskmanager.repository.TaskRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.*;
+import com.disha.taskmanager.dto.TaskRequest;
+import com.disha.taskmanager.dto.TaskResponse;
 
 import java.util.List;
 
@@ -16,48 +18,66 @@ public class TaskService {
         this.repository = repository;
     }
 
-    public TaskEntity createTask(TaskEntity task) {
+    public TaskResponse createTask(TaskRequest request) {
 
-        if (task.getTitle() == null || task.getTitle().isBlank()) {
-            throw new RuntimeException("Title cannot be empty.");
-        }
+        TaskEntity task = new TaskEntity();
 
-        if (task.getDescription() == null || task.getDescription().isBlank()) {
-            throw new RuntimeException("Description cannot be empty.");
-        }
+        task.setTitle(request.title());
+        task.setDescription(request.description());
+        task.setCompleted(request.completed());
 
-        return repository.save(task);
+        TaskEntity savedTask = repository.save(task);
+
+        return new TaskResponse(
+                savedTask.getId(),
+                savedTask.getTitle(),
+                savedTask.getDescription(),
+                savedTask.isCompleted()
+        );
     }
+    public List<TaskResponse> getAllTasks() {
 
-    public List<TaskEntity> getAllTasks() {
-        return repository.findAll();
+        return repository.findAll()
+                .stream()
+                .map(task -> new TaskResponse(
+                        task.getId(),
+                        task.getTitle(),
+                        task.getDescription(),
+                        task.isCompleted()
+                ))
+                .toList();
     }
+    public TaskResponse getById(Long id) {
 
-    public TaskEntity getById(Long id) {
-
-        return repository.findById(id)
+        TaskEntity task = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Task not found."));
+
+        return new TaskResponse(
+                task.getId(),
+                task.getTitle(),
+                task.getDescription(),
+                task.isCompleted()
+        );
     }
 
-    public TaskEntity updateTask(Long id, TaskEntity updatedTask) {
-
-        if (updatedTask.getTitle() == null || updatedTask.getTitle().isBlank()) {
-            throw new RuntimeException("Title cannot be empty.");
-        }
-
-        if (updatedTask.getDescription() == null || updatedTask.getDescription().isBlank()) {
-            throw new RuntimeException("Description cannot be empty.");
-        }
+    public TaskResponse updateTask(Long id,
+                                   TaskRequest request) {
 
         TaskEntity existingTask = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Task not found."));
 
-        existingTask.setTitle(updatedTask.getTitle());
-        existingTask.setDescription(updatedTask.getDescription());
-        existingTask.setCompleted(updatedTask.isCompleted());
-        existingTask.setUser(updatedTask.getUser());
+        existingTask.setTitle(request.title());
+        existingTask.setDescription(request.description());
+        existingTask.setCompleted(request.completed());
 
-        return repository.save(existingTask);
+        TaskEntity updatedTask = repository.save(existingTask);
+
+        return new TaskResponse(
+                updatedTask.getId(),
+                updatedTask.getTitle(),
+                updatedTask.getDescription(),
+                updatedTask.isCompleted()
+        );
     }
 
     public void delete(Long id) {
@@ -68,10 +88,17 @@ public class TaskService {
 
         repository.deleteById(id);
     }
-    public Page<TaskEntity> getTasks(int page, int size, String sortBy) {
+    public Page<TaskResponse> getTasks(int page,
+                                       int size,
+                                       String sortBy) {
 
         return repository.findAll(
                 PageRequest.of(page, size, Sort.by(sortBy))
-        );
+        ).map(task -> new TaskResponse(
+                task.getId(),
+                task.getTitle(),
+                task.getDescription(),
+                task.isCompleted()
+        ));
     }
 }

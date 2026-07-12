@@ -5,6 +5,12 @@ import com.disha.taskmanager.service.TaskService;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import java.util.*;
+import com.disha.taskmanager.dto.TaskRequest;
+import com.disha.taskmanager.dto.TaskResponse;
+import jakarta.validation.Valid;
+import com.disha.taskmanager.dto.TaskRequest;
+import com.disha.taskmanager.dto.TaskResponse;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/tasks")
@@ -15,26 +21,30 @@ public class TaskController {
     public TaskController(TaskService service){
         this.service=service;
     }
+
     @PostMapping
-    public TaskEntity createTask(@RequestBody TaskEntity task) {
-        return service.createTask(task);
+    public TaskResponse createTask(
+            @Valid @RequestBody TaskRequest request) {
+
+        return service.createTask(request);
     }
 
     @GetMapping("/all")
-    public List<TaskEntity> getAllTasks() {
+    public List<TaskResponse> getAllTasks() {
         return service.getAllTasks();
     }
 
     @GetMapping("/{id}")
-    public TaskEntity getById(@PathVariable Long id) {
+    public TaskResponse getById(@PathVariable Long id) {
         return service.getById(id);
     }
 
     @PatchMapping("/{id}")
-    public TaskEntity updateTask(@PathVariable Long id,
-                                            @RequestBody TaskEntity updatedTask) {
+    public TaskResponse updateTask(
+            @PathVariable Long id,
+            @Valid @RequestBody TaskRequest request) {
 
-        return service.updateTask(id, updatedTask);
+        return service.updateTask(id, request);
     }
 
     @DeleteMapping("/{id}")
@@ -42,7 +52,7 @@ public class TaskController {
         service.delete(id);
     }
     @GetMapping
-    public Page<TaskEntity> getTasks(
+    public Page<TaskResponse> getTasks(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
             @RequestParam(defaultValue = "id") String sortBy) {
